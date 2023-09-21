@@ -1,20 +1,22 @@
 import { execSync } from "child_process"
 
-let exec: (value: string) => string = () => { throw new Error() }
+let exec: (value: string) => string = () => {
+	throw new Error()
+}
 
 export function setExec(newExec: (value: string) => string) {
 	exec = newExec
 }
 
 export interface Rect {
-	x: number 
-	y: number 
+	x: number
+	y: number
 	width: number
 	height: number
 }
 
 type WidgetType = "label" | "paragraph" | "button" | "textinput" | "textarea"
-type JustifyType = 'left' | 'center' | 'right'
+type JustifyType = "left" | "center" | "right"
 
 const PROBLEM_LETTERS = "ěščřžýáíéúů"
 
@@ -52,9 +54,9 @@ export class Label implements LabelProps {
 	id: string
 	fontSize?: number
 	justify?: string
-	
+
 	constructor({ rect, text, id, fontSize, justify }: LabelProps) {
-		this.rect =  rect
+		this.rect = rect
 		this.text = diacriticsRepair(text)
 		this.id = id
 		this.fontSize = fontSize
@@ -116,8 +118,8 @@ export class Image implements ImageProps {
 	rect: Rect
 	path: string
 	id: string
-	
-	constructor({ rect, path, id } : ImageProps) {
+
+	constructor({ rect, path, id }: ImageProps) {
 		this.rect = rect
 		this.path = path
 		this.id = id
@@ -143,7 +145,7 @@ class Range implements RangeProps {
 	max: number
 	value: number
 	id: string
-	
+
 	constructor({ rect, min, max, value, id }: RangeProps) {
 		this.rect = rect
 		this.min = min
@@ -197,18 +199,18 @@ class NoClear {
 }
 
 function parseOutput(output: string): [string, string | null] {
-	if (output.startsWith('selected:')) {
+	if (output.startsWith("selected:")) {
 		const button = output.slice(10).trim()
 		return [button, null]
-	} else if (output.startsWith('input:') || output.startsWith('range:')) {
-		const [name, input] = output.slice(7).split(' : ')
+	} else if (output.startsWith("input:") || output.startsWith("range:")) {
+		const [name, input] = output.slice(7).split(" : ")
 		return [name, input.trim()]
 	}
-	return ['', null]
+	return ["", null]
 }
 
-function passToSimple(input: string | string[], simplePath = '/opt/bin/simple'): [string, string | null] {
-	const toPass = Array.isArray(input) ? input.join('\n') : input
+function passToSimple(input: string | string[], simplePath = "/opt/bin/simple"): [string, string | null] {
+	const toPass = Array.isArray(input) ? input.join("\n") : input
 	const result = exec(`"${toPass}" | ${simplePath}`)
 	return parseOutput(result)
 }
@@ -222,11 +224,11 @@ export class Scene {
 	public input: [string, string | null]
 	private readonly simplePath: string
 
-	constructor(noClear = false, timeOut?: number, simplePath = '/opt/bin/simple') {
+	constructor(noClear = false, timeOut?: number, simplePath = "/opt/bin/simple") {
 		this.commands = []
-		this.input = ['', null]
+		this.input = ["", null]
 		this.simplePath = simplePath
-		
+
 		if (noClear) {
 			this.commands.push(new NoClear())
 		}
@@ -241,10 +243,13 @@ export class Scene {
 	}
 
 	display() {
-		this.input = passToSimple(this.commands.map(command => command.toString()), this.simplePath)
+		this.input = passToSimple(
+			this.commands.map(command => command.toString()),
+			this.simplePath
+		)
 	}
 
 	remove(id: string) {
-		this.commands = this.commands.filter(command => !('id' in command && command.id === id) )
+		this.commands = this.commands.filter(command => !("id" in command && command.id === id))
 	}
 }

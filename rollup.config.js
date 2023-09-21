@@ -31,7 +31,7 @@ export default {
 			}
 		}),
 		resolve({
-			browser: false,
+			browser: true,
 			exportConditions: ["svelte"],
 			extensions: [".svelte"]
 		}),
