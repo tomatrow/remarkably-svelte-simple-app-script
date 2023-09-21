@@ -4,8 +4,7 @@
 	"version": "0.0.0",
 	"type": "module",
 	"scripts": {
-		"rollup-build": "rollup -c",
-		"vite-build": "vite build"
+		"build": "vite build"
 	},
 	"devDependencies": {
 		"@rollup/plugin-commonjs": "^25.0.4",
