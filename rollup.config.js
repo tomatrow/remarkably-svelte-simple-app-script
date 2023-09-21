@@ -12,11 +12,8 @@ export default {
 	output: {
 		file: "build/bundle.js",
 		format: "iife",
-		sourcemap: true,
 		banner: fs.readFileSync("./artifacts/banner.js"),
-		globals: {
-			fs: "fs"
-		}
+		globals: { fs: "fs" }
 	},
 	onwarn(warning) {
 		if (warning.code === "MISSING_NODE_BUILTINS") return
