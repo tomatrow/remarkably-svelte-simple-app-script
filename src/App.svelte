@@ -1,44 +1,25 @@
 <script lang="ts">
-	import fs from "fs"
+	import fs from "node:fs"
 	import { onMount } from "svelte"
 	import Child from "./lib/Child.svelte"
 
-	export let showChild = false
-	export let filename: string | undefined
-
-	export function watch(newFilename: string) {
-		unwatch()
-
-		filename = newFilename
-		console.log({ watch: filename })
-	}
-
-	export function unwatch() {
-		if (!filename) return
-		console.log({ unwatch: filename })
-	}
-
-	function handleMount() {
-		console.log("hello")
-
-		showChild = true
-
-		setTimeout(() => (showChild = false), 1000)
-	}
-
-	function handleUnmount() {
-		console.log("a good time")
-	}
+	let mounted = false
+	let showChild = false
 
 	onMount(() => {
-		handleMount()
+		mounted = true
+		console.log("App.onMount")
 
-		return handleUnmount
+		showChild = true
+		setTimeout(() => (showChild = false), 1000)
+
+		return () => {
+			mounted = false
+			console.log("App.onDestroy")
+		}
 	})
 
-	const readme = fs.readFileSync("./readme.md", "utf8")
-
-	console.log({ readme })
+	$: if (mounted) console.log({ readme: fs.readFileSync("./readme.md", "utf8") })
 </script>
 
 {#if showChild}<Child />{/if}

@@ -1,7 +1,8 @@
 import { defineConfig } from "vite"
 import { svelte } from "@sveltejs/vite-plugin-svelte"
 import autoPreprocess from "svelte-preprocess"
-import fs from "fs"
+import fs from "node:fs"
+import { builtinModules } from "node:module"
 
 export default defineConfig({
 	build: {
@@ -14,11 +15,12 @@ export default defineConfig({
 			name: "remarkableSvelteSimpleAppScript"
 		},
 		rollupOptions: {
+			external: [...builtinModules, /^node:/],
 			output: {
 				dir: "build",
 				format: "iife",
 				banner: fs.readFileSync("./artifacts/banner.js"),
-				globals: { fs: "fs" }
+				globals: { "node:fs": "fs" }
 			},
 			onwarn(warning) {
 				if (warning.code === "MISSING_NODE_BUILTINS") return
